@@ -1,0 +1,53 @@
+﻿@model List<LostFoundAdmin.Models.FoundItem>
+@{
+    ViewData["Title"] = "Lost & Found — Admin Dashboard";
+}
+
+<h1>Found Items</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th>Location</th>
+            <th>Date Found</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ItemName</td>
+                <td>@item.LocationFound</td>
+                <td>@item.DateFound.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @if (item.Status == "claim_pending")
+                    {
+                        <span class="badge bg-warning">Claim pending</span>
+                    }
+                    else if (item.Status == "returned")
+                    {
+                        <span class="badge bg-success">Collected</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Available</span>
+                    }
+                </td>
+                <td>
+                    @if (item.Status == "claim_pending")
+                    {
+                        <form asp-action="MarkReturned" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-success">
+                                Confirm Collected
+                            </button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
