@@ -10,17 +10,23 @@ builder.Services.AddAuthentication("StaffAuth")
     });
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<SupabaseStorageService>();
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(new NpgsqlDataSourceBuilder(
-    builder.Configuration.GetConnectionString("Supabase")).Build());
+// Fail early with a clear message if the connection string is missing
+var connectionString = builder.Configuration.GetConnectionString("Supabase");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException(
+        "Connection string 'Supabase' is missing. Check secrets.json (ConnectionStrings:Supabase).");
+
+builder.Services.AddSingleton(new NpgsqlDataSourceBuilder(connectionString).Build());
 
 builder.Services.AddScoped<FoundItemService>();
 
-var app = builder.Build();
+var app = builder.Build();   // <-- this line was missing
 
 if (!app.Environment.IsDevelopment())
 {
@@ -36,6 +42,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

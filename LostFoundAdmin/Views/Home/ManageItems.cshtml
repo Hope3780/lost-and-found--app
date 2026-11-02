@@ -1,0 +1,105 @@
+﻿@model List<LostFoundAdmin.Models.ReportedItemViewModel>
+@{
+    ViewData["Title"] = "Manage Items";
+    ViewData["Active"] = "manage";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <style>
+        .table-card {
+            border: 1px solid #e3e8ef;
+            border-radius: 16px;
+            padding: 20px 18px;
+            max-width: 980px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: #5b6b7d;
+            text-transform: uppercase;
+            padding: 14px 10px 20px;
+        }
+
+        td {
+            padding: 16px 10px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .update-link {
+            color: #17396a;
+            text-decoration: none;
+        }
+
+            .update-link:hover {
+                text-decoration: underline;
+            }
+
+        .flash {
+            display: inline-block;
+            font-size: 11px;
+            color: #1c6b34;
+            background: #dff5e5;
+            padding: 8px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+}
+
+<h1>Manage Items</h1>
+<p class="subtitle">Select a lost or found report to update its status</p>
+
+@if (TempData["Message"] != null)
+{
+    <div class="flash">@TempData["Message"]</div>
+}
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>Report</th>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Updated By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>@r.Ref</td>
+                    <td>@r.ItemName</td>
+                    <td>@r.Type</td>
+                    <td>@r.Location</td>
+                    <td>@r.Status</td>
+                    <td>@(string.IsNullOrWhiteSpace(r.UpdatedByEmail) ? "—" : r.UpdatedByEmail)</td>
+                    <td>
+                        <a class="update-link" asp-action="EditStatus"
+                           asp-route-id="@r.Id" asp-route-type="@r.Type">Update</a>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any())
+            {
+                <tr><td colspan="7" style="text-align:center;color:#6b7785;padding:30px">No items yet.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,4 +1,273 @@
-﻿@model List<LostFoundAdmin.Models.FoundItem>
+﻿@model List<LostFoundAdmin.Models.ReportedItemViewModel>
+@{
+    ViewData["Title"] = "Dashboard";
+    ViewData["Active"] = "dashboard";
+    Layout = "_AdminLayout";
+
+    // Statuses that still need attention from staff
+    var pendingStatuses = new[] { "logged", "pending", "under_review", "claim_pending" };
+
+    var lostCount = Model.Count(i => i.Type == "Lost");
+    var foundCount = Model.Count(i => i.Type == "Found");
+    var pendingCount = Model.Count(i => pendingStatuses.Contains(i.StatusKey));
+
+    var recent = Model.Take(10).ToList();
+}
+
+@section Styles {
+    <style>
+        .cards {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            width: 154px;
+            height: 100px;
+            border: 1px solid #e3e8ef;
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #fff;
+        }
+
+            .card .label {
+                font-size: 10px;
+                letter-spacing: 0.5px;
+                color: #6b7785;
+                text-transform: uppercase;
+            }
+
+            .card .value {
+                font-size: 12px;
+                font-weight: 600;
+            }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin: 0 0 16px;
+        }
+
+        .table-card {
+            border: 1px solid #e3e8ef;
+            border-radius: 12px;
+            padding: 12px 18px 18px;
+            max-width: 980px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 400;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            color: #6b7785;
+            text-transform: uppercase;
+            padding: 12px 10px;
+        }
+
+        td {
+            padding: 14px 10px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .pill {
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+            .pill.pending {
+               /*  background: #fff4d6; */
+               color: slateblue /* color: #8a6100; */
+            }
+
+            .pill.review {
+               /*  background: #e3eefc; */
+                color: #1a4d99;
+            }
+
+            .pill.verified {
+               /*  background: #dff5e5; */
+                color:navy; 
+            }
+
+            .pill.rejected {
+               /*  background: #fde4e1; */
+                color: #b42318;
+            }
+
+            .pill.collected {
+               /*  background: #e8edf3; */
+                color: green;/* color: #4a5866; */
+            }
+
+        .staff-tag {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: #e3eefc;
+            color: #1a4d99;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .btn-collect {
+            border: none;
+            background: #17396a;
+            color: #fff;
+            font-size: 10px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+            .btn-collect:hover {
+                background: #1f4a85;
+            }
+
+        .view-link {
+            color: #17396a;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+            .view-link:hover {
+                text-decoration: underline;
+            }
+
+        .empty {
+            text-align: center;
+            color: #6b7785;
+            padding: 24px;
+        }
+    </style>
+}
+
+<h1>Dashboard</h1>
+<p class="subtitle">Overview of current lost-and-found activity</p>
+
+<div class="cards">
+    <div class="card">
+        <span class="label">Lost Reports</span>
+        <span class="value">@lostCount</span>
+    </div>
+    <div class="card">
+        <span class="label">Found Items</span>
+        <span class="value">@foundCount</span>
+    </div>
+    <div class="card">
+        <span class="label">Pending</span>
+        <span class="value">@pendingCount</span>
+    </div>
+</div>
+
+<h2 class="section-title">Recent Reports</h2>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Reported By</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!recent.Any())
+            {
+                <tr><td colspan="7" class="empty">No reports yet.</td></tr>
+            }
+
+            @foreach (var item in recent)
+            {
+                <tr>
+                    <td>@item.Ref</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.Type</td>
+                    <td>@item.Location</td>
+                    <td>
+                        @(string.IsNullOrWhiteSpace(item.ReporterEmail) ? "—" : item.ReporterEmail)
+                        @if (item.ReporterIsStaff)
+                        {
+                            <span class="staff-tag">Staff</span>
+                        }
+                    </td>
+                    <td>
+                        @switch (item.StatusKey)
+                        {
+                            case "claim_pending":
+                                <span class="pill pending">Claim Pending</span>
+                                break;
+                            case "under_review":
+                                <span class="pill review">Under Review</span>
+                                break;
+                            case "verified":
+                                <span class="pill verified">Verified</span>
+                                break;
+                            case "item_found":
+                                <span class="pill verified">Item Found</span>
+                                break;
+                            case "available_for_collection":
+                                <span class="pill verified">Available for Collection</span>
+                                break;
+                            case "rejected":
+                                <span class="pill rejected">Rejected</span>
+                                break;
+                            case "returned":
+                                <span class="pill collected">Collected</span>
+                                break;
+                            default: // logged / pending
+                                     <span class="pill pending">Pending</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @if (item.StatusKey == "claim_pending")
+                        {
+                            <form asp-action="MarkReturned" method="post" style="margin:0">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="type" value="@item.Type" />
+                                <button type="submit" class="btn-collect">Confirm Collected</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="view-link" asp-action="Details"
+                               asp-route-id="@item.Id" asp-route-type="@item.Type">View</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+@* @model List<LostFoundAdmin.Models.FoundItem>
 @{
     ViewData["Title"] = "Lost & Found — Admin Dashboard";
 }
@@ -50,4 +319,4 @@
             </tr>
         }
     </tbody>
-</table>
+</table> *@

@@ -1,0 +1,285 @@
+﻿@model LostFoundAdmin.Models.ItemDetailsViewModel
+@{
+    ViewData["Title"] = "Review Item Report";
+    ViewData["Active"] = "reported";
+    Layout = "_AdminLayout";
+
+    var isLost = Model.Type == "Lost";
+
+    // Statuses the dropdown can set on this page
+    var listed = isLost
+        ? new[] { "pending", "under_review", "item_found", "rejected" }
+        : new[] { "pending", "under_review", "verified", "rejected" };
+
+    var currentLabel = Model.StatusKey switch
+    {
+        "claim_pending" => "Claim Pending",
+        "available_for_collection" => "Available for Collection",
+        "returned" => "Collected",
+        _ => Model.StatusKey
+    };
+}
+
+@section Styles {
+    <style>
+        .review-row {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .photo {
+            width: 225px;
+            height: 215px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #eef2f7;
+            flex-shrink: 0;
+        }
+
+            .photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .photo .no-image {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 11px;
+                color: #8a97a6;
+            }
+
+        .details-card {
+            flex: 1;
+            min-width: 300px;
+            max-width: 385px;
+            border: 1px solid #e3e8ef;
+            border-radius: 16px;
+            padding: 22px 26px;
+        }
+
+        .detail {
+            display: flex;
+            font-size: 11px;
+            padding: 11px 0;
+        }
+
+        .staff-tag {
+            display: inline-block;
+            margin-left: 6px;
+            padding: 1px 7px;
+            border-radius: 999px;
+            background: #e3eefc;
+            color: #1a4d99;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+            .detail .label {
+                width: 120px;
+                color: #5b6b7d;
+                flex-shrink: 0;
+            }
+
+            .detail .value {
+                color: #1f2a37;
+            
+           }
+
+            .detail .value {
+                word-break: break-word;
+            }
+
+        .decision-title {
+            font-size: 11px;
+            margin: 48px 0 18px;
+        }
+
+        .decision-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+            .decision-row form {
+                margin: 0;
+            }
+
+        .status-select {
+            width: 190px;
+            height: 42px;
+            padding: 0 14px;
+            border: 1px solid #e3e8ef;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-family: inherit;
+            font-size: 11px;
+            color: #3a4a5c;
+            cursor: pointer;
+            outline: none;
+        }
+
+            .status-select:focus {
+                border-color: #17396a;
+            }
+
+        .btn-verify,
+        .btn-reject {
+            width: 135px;
+            height: 42px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .btn-verify {
+            background: #17396a;
+            color: #fff;
+            border: 1px solid #17396a;
+        }
+
+            .btn-verify:hover {
+                background: #1f4a85;
+            }
+
+        .btn-reject {
+            background: #fff;
+            color: #17396a;
+            border: 1px solid #17396a;
+        }
+
+            .btn-reject:hover {
+                background: #f0f4f9;
+            }
+
+        .flash {
+            display: inline-block;
+            font-size: 11px;
+            color: #1c6b34;
+            background: #dff5e5;
+            padding: 8px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 36px;
+            font-size: 11px;
+            color: #17396a;
+            text-decoration: none;
+        }
+
+            .back-link:hover {
+                text-decoration: underline;
+            }
+    </style>
+}
+
+<h1>Review Item Report @Model.Ref</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="flash">@TempData["Message"]</div>
+}
+
+<div class="review-row" style="margin-top: 32px;">
+
+    <div class="photo">
+        @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.ItemName" />
+        }
+        else
+        {
+            <div class="no-image">No image uploaded</div>
+        }
+    </div>
+
+    <div class="details-card">
+        <div class="detail"><span class="label">Item Name</span><span class="value">@Model.ItemName</span></div>
+        <div class="detail"><span class="label">Category</span><span class="value">@(string.IsNullOrWhiteSpace(Model.Category) ? "—" : Model.Category)</span></div>
+        <div class="detail"><span class="label">Type</span><span class="value">@Model.Type</span></div>
+        <div class="detail"><span class="label">Location</span><span class="value">@Model.Location</span></div>
+        <div class="detail"><span class="label">@(isLost ? "Date Reported" : "Date Found")</span><span class="value">@Model.DateFound</span></div>
+        <div class="detail"><span class="label">Description</span>
+        <span class="value">@(string.IsNullOrWhiteSpace(Model.Description) ? "—" : Model.Description)</span></div>
+        <div class="detail">
+            <span class="label">Reported By</span>
+            <span class="value">
+                @(string.IsNullOrWhiteSpace(Model.ReporterEmail) ? "—" : Model.ReporterEmail)
+                @if (Model.ReporterIsStaff)
+                {
+                    <span class="staff-tag">Staff</span>
+                }
+            </span>
+        </div>
+        <div class="detail">
+            <span class="label">Last Updated By</span>
+            <span class="value">
+                @(string.IsNullOrWhiteSpace(Model.UpdatedByEmail) ? "—" : Model.UpdatedByEmail)
+                @if (!string.IsNullOrWhiteSpace(Model.UpdatedAt))
+                {
+                    <br />
+                
+                    <span style="color:#6b7785">@Model.UpdatedAt</span>
+                }
+            </span>
+        </div>
+    </div>
+</div>
+
+@* <div class="decision-title">Verification Decision</div>
+
+<div class="decision-row">
+
+    <!-- Dropdown: changing it saves the new status -->
+    <form asp-action="UpdateStatus" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="type" value="@Model.Type" />
+        <select name="status" class="status-select" onchange="this.form.submit()">
+            @if (!listed.Contains(Model.StatusKey))
+            {
+                <option value="" selected="selected" disabled="disabled">Status: @currentLabel</option>
+            }
+            <option value="pending" selected="@(Model.StatusKey == "pending")">Status: Pending</option>
+            <option value="under_review" selected="@(Model.StatusKey == "under_review")">Status: Under Review</option>
+            @if (isLost)
+            {
+                <option value="item_found" selected="@(Model.StatusKey == "item_found")">Status: Item Found</option>
+            }
+            else
+            {
+                <option value="verified" selected="@(Model.StatusKey == "verified")">Status: Verified</option>
+            }
+            <option value="rejected" selected="@(Model.StatusKey == "rejected")">Status: Rejected</option>
+        </select>
+    </form>
+
+    <!-- Main action: "Item Found" for lost reports, "Verify Item" for found items -->
+    <form asp-action="UpdateStatus" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="type" value="@Model.Type" />
+        <input type="hidden" name="status" value="@(isLost ? "item_found" : "verified")" />
+        <button type="submit" class="btn-verify">@(isLost ? "Item Found" : "Verify Item")</button>
+    </form>
+
+    <form asp-action="UpdateStatus" method="post"
+          onsubmit="return confirm('Reject this item report?');">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="type" value="@Model.Type" />
+        <input type="hidden" name="status" value="rejected" />
+        <button type="submit" class="btn-reject">Reject</button>
+    </form>
+</div> *@
+
+<a asp-action="ReportedItems" class="back-link">&larr; Back to Reported Items</a>

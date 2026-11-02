@@ -6,42 +6,144 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Staff Login - CUT Lost &amp; Found</title>
     <style>
         body {
-            margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(160deg, #0b1623 0%, #16293b 55%, #0b1623 100%);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background-color: #0b1623; /* fallback while the image loads */
             font-family: 'Segoe UI', Arial, sans-serif;
             color: #fff;
         }
+
+            /* Background photo (blurred) */
+            body::before {
+                content: "";
+                position: fixed;
+                inset: -20px;
+                background-image: url('@Url.Content("~/images/admin_background.jpeg")');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: blur(8px);
+                z-index: -2;
+            }
+
+            /* Dark overlay for readability */
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background: rgba(11, 22, 35, 0.70);
+                z-index: -1;
+            }
+
         .brand-tag {
-            position: absolute; top: 24px; left: 32px;
-            font-size: 12px; letter-spacing: 2px; font-weight: 600; color: #cfd8e3;
+            position: absolute;
+            top: 24px;
+            left: 32px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #cfd8e3;
         }
+
+        /* CUT logo, top right */
+        .logo {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            width: 90px;
+            height: auto;
+            opacity: 0.9;
+        }
+
         .tagline {
-            position: absolute; bottom: 20px; right: 32px;
-            font-size: 13px; font-style: italic; color: #9fb0c3;
+            position: absolute;
+            bottom: 20px;
+            right: 32px;
+            font-size: 13px;
+            font-style: italic;
+            color: #9fb0c3;
         }
-        .login-card { width: 360px; text-align: center; }
-        .login-card h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
-        .login-card h2 { font-size: 14px; font-weight: 400; color: #cfd8e3; margin-top: 0; margin-bottom: 32px; }
-        .field { text-align: left; margin-bottom: 18px; }
-        .field label { display: block; font-size: 13px; margin-bottom: 6px; color: #e4e9ef; }
-        .field input {
-            width: 100%; padding: 12px 14px; border: none; border-radius: 6px;
-            font-size: 14px; box-sizing: border-box;
+
+        .login-card {
+            width: 360px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
         }
+
+            .login-card h1 {
+                font-size: 26px;
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+
+            .login-card h2 {
+                font-size: 14px;
+                font-weight: 400;
+                color: #cfd8e3;
+                margin-top: 0;
+                margin-bottom: 32px;
+            }
+
+        .field {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+
+            .field label {
+                display: block;
+                font-size: 13px;
+                margin-bottom: 6px;
+                color: #e4e9ef;
+            }
+
+            .field input {
+                width: 100%;
+                padding: 12px 14px;
+                border: none;
+                border-radius: 6px;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+
         .btn-signin {
-            width: 100%; padding: 13px; margin-top: 10px; border: none; border-radius: 6px;
-            background: #1c3f66; color: #fff; font-weight: 600; letter-spacing: 1px;
-            font-size: 14px; cursor: pointer;
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #1c3f66;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 14px;
+            cursor: pointer;
         }
-        .btn-signin:hover { background: #234d7a; }
-        .error { color: #ff8080; font-size: 13px; margin-bottom: 12px; }
+
+            .btn-signin:hover {
+                background: #234d7a;
+            }
+
+        .error {
+            color: #ff8080;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
     <div class="brand-tag">CUT LOST &amp; FOUND</div>
+
+    <img src="@Url.Content("~/images/cut-logo.png")" alt="Central University of Technology, Free State" class="logo" />
 
     <div class="login-card">
         <h1>Protection Services</h1>
