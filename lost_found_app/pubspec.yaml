@@ -1,0 +1,29 @@
+name: lost_found_app
+description: Residence Lost & Found - student app (ITC327W)
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  supabase_flutter: ^2.5.6
+  image_picker: ^1.1.2
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/cut_logo.png
+    - assets/images/campus.jpeg
+    - assets/images/bhp.jpeg
+    - assets/images/CUT-Logo.png
+    - assets/images/CUT_medium.jpg
+    - assets/images/dark_bhp.jpg
