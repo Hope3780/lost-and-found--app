@@ -1,16 +1,14 @@
-# lost_and_found_app
+# LOST_AND_FOUND_PROJECT
 
-A new Flutter project.
+# Group Members
+1. Katu AJ 220044317
+2. Makwele BL 219013255
+3. Zungu SM 224066331
+4. Zikalala CT 224047638
+5. Mmakola EB 224031692
+6. Khosa NH 222002087
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Technologies Used 
+1. Flutter
+2. ASP.NET
+3. Supabase 
