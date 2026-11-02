@@ -1,0 +1,13 @@
+Meeting notes: 2026/10/27
+
+
+Specify which campus from the get-go
+status:. Information bubble to explain what each status means 
+Send an email to the student to notify them of a lost item (Outlook)
+Usability: add a button for the admin dashboard so they could report on their side if they found the item (Protection Services) 
+rejected.. change the name to soften it  or maybe email to the person who logged 
+no photo, just descriptions for items you cannot easily verify like IDs and student cards 
+specify that you'd suffer repercussions for claiming what's not yours  
+ask protection how they verify ownership on certain items you cannot easily verify
+superuser for Supabase to have someone who adds staff members 
+categorize users who'd have access
